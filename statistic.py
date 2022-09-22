@@ -222,3 +222,53 @@ class LOF_processing():
       pos = np.hstack(pos)
       filter_data = data.iloc[pos]
       return filter_data
+
+class Z_test_modify():
+   def z_test_normalization(self, data):
+      median = np.median(data, axis = 0)
+      MAD = median_abs_deviation(data)
+      z_modify = 0.6745*((data - median)/MAD)
+      return z_modify
+
+   def z_outlier_processing(self, data, z, deviation_rule=3, show_report=False):
+      columns = z.columns
+      data_outliers = [[] for _ in columns]
+      data_outliers_indexes = [[] for _ in columns]
+
+      for n in range(z.shape[0]):
+         for column_id in range(len(columns)):
+            if z.iloc[n,0] > deviation_rule:
+               data_outliers[column_id].append(data.iloc[n,column_id])
+               data_outliers_indexes[column_id].append(n)
+
+      outlier_length = [len(outlier) for outlier in data_outliers]
+      report = pd.DataFrame(outlier_length, index = columns, columns = ['Número de Datos Atípicos'])
+
+      if show_report:
+         display(report)
+
+      return {
+         "report": report,
+         "data_outliers": data_outliers,
+         "index_data_outliers": data_outliers_indexes
+      }
+
+   def innerJoinIndexes(self, metadata_outliers, verbose = False):
+         for index in range(len(metadata_outliers["index_data_outliers"])):
+            currentListIndexes = set(metadata_outliers["index_data_outliers"][index])
+            
+            if index == 0:
+               localSet = currentListIndexes
+            else:
+               localSet = currentListIndexes & localSet
+            if verbose:
+               print("currentListIndexes: {}".format(currentListIndexes))
+               print("localSet: {}".format(localSet))
+         return list(localSet)
+
+   def filterOutlier(self, data, outliers_indexes, verbose = True):
+      filter_data = data.drop(outliers_indexes)
+      if verbose:
+         print("Samples with outliers: {}".format(data.shape))
+         print("Samples without outliers: {}".format(filter_data.shape))
+      return filter_data
