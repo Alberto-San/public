@@ -191,7 +191,7 @@ class Z_test():
 
 class LOF_processing():
   def processOutliersByLOF(self, data, k=5):
-      LOF = LocalOutlierFactor(n_neighbors = k, algorithm = 'auto', contamination = 'auto', metric = 'euclidean') 
+      LOF = LocalOutlierFactor(n_neighbors = k, algorithm = 'auto', contamination = 0.05, metric = 'euclidean') 
       process_data = LOF.fit_predict(data)
       NOF = LOF.negative_outlier_factor_
       radio_outiler = (NOF.max() - NOF)/(NOF.max() - NOF.min())
