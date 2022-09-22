@@ -1,3 +1,18 @@
+import pandas as pd
+import numpy as np
+import requests
+import io
+import seaborn as sns
+from matplotlib import pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.neighbors import LocalOutlierFactor # Algoritmo LOF
+from scipy.special import entr # Entropía de Shannon
+from scipy.stats import multivariate_normal # Modelo de distribución gaussiana multivariable
+from sklearn.covariance import EllipticEnvelope # Estimación de Covarianza
+from scipy.stats import median_abs_deviation # MAD
+from scipy.stats import iqr # Interquartile range
+import matplotlib
+
 def plotBoxplot(data):
     sns.set(rc={'figure.figsize':(25,9)}) # Tamaño de la figura
     sns.set(style="whitegrid") # Estilo de la figura
