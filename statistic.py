@@ -28,6 +28,9 @@ def plotAgainstOriginal(data, data_without_outliers, feature_1, feature_2):
     plt.show()
 
 def getEntropy(data_original, data_without_outlier, outlierMethod, k = 0, show = False):
+    min = data_original.min()
+    data_original = data_original - min + 0.001
+    data_without_outlier = data_without_outlier - min + 0.001
     H_1 = entr(data_original[data_original.columns])
     H_2 = entr(data_without_outlier[data_without_outlier.columns])
     entropia_normalizada_1 = H_1.sum()/data_original.shape[0]
