@@ -131,7 +131,7 @@ class IQR_processing():
       data_without_outlier = plugging_data
       return data_without_outlier
 
-  def removeOutliersQuartils(self, data, metadata_outliers, quartils, method = "drop", show_information = True):
+  def removeOutliersQuartils(self, data, metadata_outliers, quartils, method = "drop", show_information = False):
       if method == "drop":
           inner_possitions = self.innerJoinIndexes(metadata_outliers)
           data_without_outlier = data.drop(index=inner_possitions)
@@ -276,3 +276,103 @@ class Z_test_modify():
          print("Samples with outliers: {}".format(data.shape))
          print("Samples without outliers: {}".format(filter_data.shape))
       return filter_data
+
+def applyLOF(scale_data, feature_1=None, feature_2=None, show_info=False):
+  # process Outliers By LOF Method
+  LOF = LOF_processing()
+  metadata_LOF = LOF.processOutliersByLOF(scale_data, k=5)
+  data_without_outliers_LOF = LOF.filterOutliersLOF(scale_data, metadata_LOF["process_data"], metadata_LOF["ground_truth"])
+  entropyByVariableLOF = getEntropy(scale_data, data_without_outliers_LOF, "LOF")
+
+  if show_info:
+    # After Scaling
+    print(5*"\n" + "Scale Data Boxplot")
+    plotBoxplot(scale_data)
+    plt.show()
+    # Comparing with original
+    print(5*"\n" + "Número de muestras con outilers:", scale_data.shape[0])
+    print("Número de muestras sin outilers:", data_without_outliers_LOF.shape[0])
+    print("outliers in RED")
+    plotAgainstOriginal(scale_data, data_without_outliers_LOF, feature_1, feature_2)
+    print(5*"\n" + "Difference between Entropies Using LOF: {}".format((entropyByVariableLOF["Entropia Original"] - entropyByVariableLOF["Entropia " + "LOF"]).sum()))
+  return entropyByVariableLOF, data_without_outliers_LOF
+
+def applyIQR(scale_data, feature_1=None, feature_2=None, method="drop", show_info=False):
+  iqr_ = IQR_processing()
+  quartils = iqr_.getQuartils(scale_data)
+  metadata_outliers = iqr_.getOutliersFromQuartils(scale_data, quartils)
+  if method=="drop":
+    data_without_outliers = iqr_.removeOutliersQuartils(data = scale_data, metadata_outliers = metadata_outliers, quartils = quartils, method="drop", show_information=show_info)
+  else:
+    data_without_outliers = iqr_.removeOutliersQuartils(data = scale_data, metadata_outliers = metadata_outliers, quartils = quartils, method="plugging", show_information=show_info)
+  entropyByVariable = getEntropy(scale_data, data_without_outliers, "IQR " + method)
+
+  if show_info:
+    print("BoxPlot with outliers")
+    iqr_.boxPlotWithLimits(scale_data, quartils)
+    print(5*"\n" + "BoxPlot without outliers")
+    iqr_.boxPlotWithLimits(data_without_outliers, quartils)
+    # Comparing with original
+    print("outliers in RED")
+    plotAgainstOriginal(scale_data, data_without_outliers, feature_1, feature_2)
+    print(5*"\n" + "Difference between Entropies Using IQR DROP: {}".format((entropyByVariable["Entropia Original"] - entropyByVariable["Entropia " + "IQR " + method]).sum()))
+  
+  return entropyByVariable, data_without_outliers
+
+def testZ(scale_data, feature_1=None, feature_2=None, show_info=False):
+  # Using Z-test
+  Z_test_ = Z_test()
+  z_normalization = Z_test_.z_test_normalization(scale_data)
+  metadata_z_test = Z_test_.z_outlier_processing(scale_data, z_normalization)
+  outliers_indexes = Z_test_.innerJoinIndexes(metadata_z_test)
+  data_without_outliers_Ztest = Z_test_.filterOutlier(scale_data, outliers_indexes)
+  entropyByVariableZTEST = getEntropy(scale_data, data_without_outliers_Ztest, "Z_TEST METHOD")
+
+  if show_info:
+    print(5*"\n" + "Z_TEST METHOD")
+    print("Difference between Entropies Using Z_TEST METHOD: {}".format((entropyByVariableZTEST["Entropia Original"] - entropyByVariableZTEST["Entropia " + "Z_TEST METHOD"]).sum()))
+    plotAgainstOriginal(scale_data, data_without_outliers_Ztest, feature_1, feature_2)
+
+  return entropyByVariableZTEST, data_without_outliers_Ztest
+
+def testZmodificado(scale_data, feature_1=None, feature_2=None, show_info=False):
+  Z_test_m = Z_test_modify()
+  z_normalization = Z_test_m.z_test_normalization(scale_data)
+  metadata_z_test = Z_test_m.z_outlier_processing(scale_data, z_normalization)
+  outliers_indexes = Z_test_m.innerJoinIndexes(metadata_z_test)
+  data_without_outliers_Ztest_m = Z_test_m.filterOutlier(scale_data, outliers_indexes)
+  entropyByVariableZTESTM = getEntropy(scale_data, data_without_outliers_Ztest_m, "Z_TEST MOD METHOD")
+  print("Difference between Entropies Using Entropia Z_TEST MOD METHOD: {}".format((entropyByVariableZTESTM["Entropia Original"] - entropyByVariableZTESTM["Entropia " + "Z_TEST MOD METHOD"]).sum()))
+
+  if show_info:
+    print(5*"\n" + "Entropia Z_TEST MOD METHOD")
+    plotAgainstOriginal(scale_data, data_without_outliers_Ztest_m, feature_1, feature_2)
+
+  return entropyByVariableZTESTM, data_without_outliers_Ztest_m
+
+
+def summaryBestEntropy(scale_data, feature_1=None, feature_2=None, show_info=False):
+  entropyByVariableLOF, _ = applyLOF(scale_data, show_info)
+  entropyByVariableDROP = applyIQR(scale_data, feature_1, feature_2, method = "drop", show_info = show_info)
+  entropyByVariablePLUGGING = applyIQR(scale_data, feature_1, feature_2, method = "plugging", show_info = show_info)
+  entropyByVariableZTEST = testZ(scale_data, feature_1, feature_2, show_info = show_info)
+  entropyByVariableZTESTM = testZmodificado(scale_data, feature_1, feature_2, show_info = show_info)
+
+  entropyDF = pd.concat([
+      entropyByVariableLOF["Entropia Original"],
+      entropyByVariableLOF["Entropia LOF"],
+      entropyByVariableDROP["Entropia IQR drop"],
+      entropyByVariablePLUGGING["Entropia IQR plugging"],
+      entropyByVariableZTEST["Entropia Z_TEST METHOD"],
+      entropyByVariableZTESTM["Entropia Z_TEST MOD METHOD"]
+  ], axis=1)
+
+  entropyDF2 = entropyDF.copy()
+  columns = entropyDF2.columns
+  for column in columns:
+    if column != "Entropia Original":
+      entropyDF2[column] = (
+          entropyDF2["Entropia Original"].sum() - 
+          entropyDF2[column].sum())
+    
+  return entropyDF2.drop(columns=["Entropia Original"]).drop_duplicates()
