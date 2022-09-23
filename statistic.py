@@ -278,6 +278,7 @@ class Z_test_modify():
       return filter_data
 
 def applyLOF(scale_data, feature_1=None, feature_2=None, show_info=False):
+  print("LOF")
   # process Outliers By LOF Method
   LOF = LOF_processing()
   metadata_LOF = LOF.processOutliersByLOF(scale_data, k=5)
@@ -298,6 +299,7 @@ def applyLOF(scale_data, feature_1=None, feature_2=None, show_info=False):
   return entropyByVariableLOF, data_without_outliers_LOF
 
 def applyIQR(scale_data, feature_1=None, feature_2=None, method="drop", show_info=False):
+  print("IQR" + method + "...")
   iqr_ = IQR_processing()
   quartils = iqr_.getQuartils(scale_data)
   metadata_outliers = iqr_.getOutliersFromQuartils(scale_data, quartils, show_info)
@@ -320,6 +322,7 @@ def applyIQR(scale_data, feature_1=None, feature_2=None, method="drop", show_inf
   return entropyByVariable, data_without_outliers
 
 def testZ(scale_data, feature_1=None, feature_2=None, show_info=False):
+  print("test Z...")
   # Using Z-test
   Z_test_ = Z_test()
   z_normalization = Z_test_.z_test_normalization(scale_data)
@@ -336,6 +339,7 @@ def testZ(scale_data, feature_1=None, feature_2=None, show_info=False):
   return entropyByVariableZTEST, data_without_outliers_Ztest
 
 def testZmodificado(scale_data, feature_1=None, feature_2=None, show_info=False):
+  print("test Z modificado...")
   Z_test_m = Z_test_modify()
   z_normalization = Z_test_m.z_test_normalization(scale_data)
   metadata_z_test = Z_test_m.z_outlier_processing(scale_data, z_normalization)
@@ -352,7 +356,7 @@ def testZmodificado(scale_data, feature_1=None, feature_2=None, show_info=False)
 
 
 def summaryBestEntropy(scale_data, feature_1=None, feature_2=None, show_info=False):
-  entropyByVariableLOF, _ = applyLOF(scale_data, show_info)
+  entropyByVariableLOF, _ = applyLOF(scale_data, feature_1, feature_2, show_info)
   entropyByVariableDROP, _ = applyIQR(scale_data, feature_1, feature_2, method = "drop", show_info = show_info)
   entropyByVariablePLUGGING, _ = applyIQR(scale_data, feature_1, feature_2, method = "plugging", show_info = show_info)
   entropyByVariableZTEST, _ = testZ(scale_data, feature_1, feature_2, show_info = show_info)
