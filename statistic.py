@@ -353,10 +353,10 @@ def testZmodificado(scale_data, feature_1=None, feature_2=None, show_info=False)
 
 def summaryBestEntropy(scale_data, feature_1=None, feature_2=None, show_info=False):
   entropyByVariableLOF, _ = applyLOF(scale_data, show_info)
-  entropyByVariableDROP = applyIQR(scale_data, feature_1, feature_2, method = "drop", show_info = show_info)
-  entropyByVariablePLUGGING = applyIQR(scale_data, feature_1, feature_2, method = "plugging", show_info = show_info)
-  entropyByVariableZTEST = testZ(scale_data, feature_1, feature_2, show_info = show_info)
-  entropyByVariableZTESTM = testZmodificado(scale_data, feature_1, feature_2, show_info = show_info)
+  entropyByVariableDROP, _ = applyIQR(scale_data, feature_1, feature_2, method = "drop", show_info = show_info)
+  entropyByVariablePLUGGING, _ = applyIQR(scale_data, feature_1, feature_2, method = "plugging", show_info = show_info)
+  entropyByVariableZTEST, _ = testZ(scale_data, feature_1, feature_2, show_info = show_info)
+  entropyByVariableZTESTM, _ = testZmodificado(scale_data, feature_1, feature_2, show_info = show_info)
 
   entropyDF = pd.concat([
       entropyByVariableLOF["Entropia Original"],
