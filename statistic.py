@@ -300,7 +300,7 @@ def applyLOF(scale_data, feature_1=None, feature_2=None, show_info=False):
 def applyIQR(scale_data, feature_1=None, feature_2=None, method="drop", show_info=False):
   iqr_ = IQR_processing()
   quartils = iqr_.getQuartils(scale_data)
-  metadata_outliers = iqr_.getOutliersFromQuartils(scale_data, quartils)
+  metadata_outliers = iqr_.getOutliersFromQuartils(scale_data, quartils, show_info)
   if method=="drop":
     data_without_outliers = iqr_.removeOutliersQuartils(data = scale_data, metadata_outliers = metadata_outliers, quartils = quartils, method="drop", show_information=show_info)
   else:
@@ -325,7 +325,7 @@ def testZ(scale_data, feature_1=None, feature_2=None, show_info=False):
   z_normalization = Z_test_.z_test_normalization(scale_data)
   metadata_z_test = Z_test_.z_outlier_processing(scale_data, z_normalization)
   outliers_indexes = Z_test_.innerJoinIndexes(metadata_z_test)
-  data_without_outliers_Ztest = Z_test_.filterOutlier(scale_data, outliers_indexes)
+  data_without_outliers_Ztest = Z_test_.filterOutlier(scale_data, outliers_indexes, show_info)
   entropyByVariableZTEST = getEntropy(scale_data, data_without_outliers_Ztest, "Z_TEST METHOD")
 
   if show_info:
@@ -340,7 +340,7 @@ def testZmodificado(scale_data, feature_1=None, feature_2=None, show_info=False)
   z_normalization = Z_test_m.z_test_normalization(scale_data)
   metadata_z_test = Z_test_m.z_outlier_processing(scale_data, z_normalization)
   outliers_indexes = Z_test_m.innerJoinIndexes(metadata_z_test)
-  data_without_outliers_Ztest_m = Z_test_m.filterOutlier(scale_data, outliers_indexes)
+  data_without_outliers_Ztest_m = Z_test_m.filterOutlier(scale_data, outliers_indexes, show_info)
   entropyByVariableZTESTM = getEntropy(scale_data, data_without_outliers_Ztest_m, "Z_TEST MOD METHOD")
   print("Difference between Entropies Using Entropia Z_TEST MOD METHOD: {}".format((entropyByVariableZTESTM["Entropia Original"] - entropyByVariableZTESTM["Entropia " + "Z_TEST MOD METHOD"]).sum()))
 
