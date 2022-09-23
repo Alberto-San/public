@@ -186,7 +186,7 @@ class Z_test():
                print("localSet: {}".format(localSet))
          return list(localSet)
 
-   def filterOutlier(self, data, outliers_indexes, verbose = True):
+   def filterOutlier(self, data, outliers_indexes, verbose = False):
       filter_data = data.drop(outliers_indexes)
       if verbose:
          print("Samples with outliers: {}".format(data.shape))
@@ -270,7 +270,7 @@ class Z_test_modify():
                print("localSet: {}".format(localSet))
          return list(localSet)
 
-   def filterOutlier(self, data, outliers_indexes, verbose = True):
+   def filterOutlier(self, data, outliers_indexes, verbose = False):
       filter_data = data.drop(outliers_indexes)
       if verbose:
          print("Samples with outliers: {}".format(data.shape))
