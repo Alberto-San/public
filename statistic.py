@@ -90,7 +90,8 @@ class IQR_processing():
 
       return {
           "data_outliers": data_outliers,
-          "index_data_outliers": index_data_outliers
+          "index_data_outliers": index_data_outliers,
+          "reporte": reporte
       }
 
   def innerJoinIndexes(self, metadata_outliers, verbose = False):
