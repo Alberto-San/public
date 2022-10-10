@@ -1,5 +1,5 @@
-from common import *
-from dimensionalReductionCommon import Dimensional_Reduction_Common
+from public.common import *
+from public.dimensionalReductionCommon import Dimensional_Reduction_Common
 
 
 class KernelPCA_(Dimensional_Reduction_Common):
