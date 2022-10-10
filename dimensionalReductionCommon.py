@@ -1,4 +1,4 @@
-from common import *
+from public.common import *
 
 
 class Dimensional_Reduction_Common:
