@@ -19,7 +19,7 @@ class Remove_Outliers_LOF:
 
     def processDataWithLOF(self, scaled_data, k=5):
         transformer = LocalOutlierFactor(
-            n_neighbors=k, algorithm="auto", contamination=0.05, metric="euclidean"
+            n_neighbors=k, algorithm="auto", contamination=0.05, metric="euclidean", n_jobs=-1
         )
         processed_data = transformer.fit_predict(scaled_data)
         metadata = self.getLofMetadata(transformer, scaled_data, processed_data)
