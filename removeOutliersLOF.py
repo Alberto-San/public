@@ -1,4 +1,4 @@
-from common import *
+from public.common import *
 
 
 class Remove_Outliers_LOF:
